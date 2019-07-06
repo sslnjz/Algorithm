@@ -37,6 +37,7 @@ namespace algorithm
      * | Heap           |  n log n |   n log n   |  n log n  |     1      |    no      |
      * —————————————————————————————————————————————————————————————————————————————————
      */
+
     namespace sort {
 
         /*
@@ -52,7 +53,7 @@ namespace algorithm
          *                 候也不会交换，所以相同元素的前后顺序并没有改变，所以冒泡排序是一种稳定排序算法
         */
         template <class T>
-        static void BubbleSort(T array[], size_t&& size)
+        static void bubble_sort(T array[], size_t&& size)
         {
             int last = size; //记录最大泡泡的位置
             while(last > 1)
@@ -62,9 +63,10 @@ namespace algorithm
                 {
                     if(array[j] > array[j + 1])
                     {
-                        array[j] = array[j] + array[j + 1];
-                        array[j + 1] = array[j] - array[j + 1];
-                        array[j] = array[j] - array[j + 1];
+                        //array[j] = array[j] + array[j + 1];
+                        //array[j + 1] = array[j] - array[j + 1];
+                        //array[j] = array[j] - array[j + 1];
+                        std::swap(array[j], array[j + 1]);
 
                         end = j + 1;
                     }
@@ -92,7 +94,7 @@ namespace algorithm
          *                 以选择排序是一个不稳定的排序算法。
          */
         template <class T>
-        static void SelectionSort(T array[], size_t&& size)
+        static void selection_sort(T array[], size_t&& size)
         {
             for (int i = 0; i < size - 1; ++i)
             {
@@ -103,9 +105,10 @@ namespace algorithm
                     }
                 }
                 if( min != i){ //避免不必要的交换
-                    array[i] = array[i] + array[min];
-                    array[min] = array[i] - array[min];
-                    array[i] = array[i] - array[min];
+                    //array[i] = array[i] + array[min];
+                    //array[min] = array[i] - array[min];
+                    //array[i] = array[i] - array[min];
+                    std::swap(array[i], array[min]);
                 }
 
             }
@@ -117,7 +120,7 @@ namespace algorithm
          * @ Rational    : 将无序数列的第一个元素与有序数列的元素从后往前逐个进行比较，找出插入位置，将该元素插入到有序数列的合适位置中。
          * @ Complexity  : 时间复杂度 O(N²)， 空间复杂度O(1)
          * @ Description : 每次处理就是将无序数列的第一个元素与有序数列的元素从后往前逐个进行比较，找出插入位置，将该元素插入到有序数列
-         *                 的合适位置中。假设在一个无序的数组中，要将该数组中的数按插入排序的方法从小到大排序。假设啊a[]={3,5,2,1,4};
+         *                 的合适位置中。假设在一个无序的数组中，要将该数组中的数按插入排序的方法从小到大排序。假设a[]={3,5,2,1,4};
          *                 插入排序的思想就是比大小，满足条件交换位置，一开始会像冒泡排序一样，但会比冒泡多一步就是交换后（a[i]=a[i+1]）
          *                 原位置（a[i]）会继续和前面的数比较满足条件交换，直到a[i+1]前面的数组是有序的。比如在第二次比较后数组变成
          *                 a[]={2,3,5,1,4};
@@ -127,9 +130,9 @@ namespace algorithm
          *                 等元素的后面。所以，相等元素的前后顺序没有改变，从原无序序列出去的顺序就是排好序后的顺序，所以插入排序是稳定的。
          */
         template <class T>
-        static void InsertSort(T array[], size_t&& size)
+        static void insert_sort(T array[], size_t&& size)
         {
-            T temp;
+            T temp = NULL;
             int j = 0;
             for (int i = 1; i < size; ++i) {
                 temp = array[i];
@@ -137,6 +140,34 @@ namespace algorithm
                     array[j] = array[j - 1];
                 }
                 array[j] = temp;
+            }
+        }
+
+        /*
+         * @ Title       : 希尔排序
+         * @ Rational    : 希尔排序基于插入排序的以下两点性质进行改进：
+         *                   1.插入排序在对几乎已经排好序的数据操作时，效率高，即可以达到线性排序的效率
+         *                   2.插入排序一般来说是低效的，因为插入排序每次只能将数据移动一位
+         * @ Complexity  : 时间复杂度依赖于步长的选择, 一般位于：O(nlog²n) ~ O(n^3/2) ~ O(n²)
+         * @ Description : 希尔排序，也称递减增量排序算法，是插入排序的一种更高效的改进版本
+         * @ Stability   : 由于多次插入排序，我们知道一次插入排序是稳定的，不会改变相同元 素的相对顺序，但在不同的插入排序过程中，相同
+         *                 的元素可能在各自的插入排序中移动，最后其稳定性就会被打乱
+         */
+        template <class T>
+        static void shell_sort(T array[], size_t&& size)
+        {
+            size_t _step = 1;
+            while(_step < size / 3)
+                _step = _step * 3 + 1; //步长的选取最优解无定论，一般选择在 1/2 到 1/3 附近
+
+            while(_step >= 1)
+            {
+                for (int i = _step; i < size; ++i) {
+                    for (int j = i; j >= _step && array[j] < array[j - _step] ; j -= _step) {
+                        std::swap(array[j], array[j - _step]);
+                    }
+                }
+                _step = _step / 3;
             }
         }
     }
