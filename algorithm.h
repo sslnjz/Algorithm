@@ -63,11 +63,7 @@ namespace algorithm
                 {
                     if(array[j] > array[j + 1])
                     {
-                        //array[j] = array[j] + array[j + 1];
-                        //array[j + 1] = array[j] - array[j + 1];
-                        //array[j] = array[j] - array[j + 1];
                         std::swap(array[j], array[j + 1]);
-
                         end = j + 1;
                     }
                 }
@@ -105,9 +101,6 @@ namespace algorithm
                     }
                 }
                 if( min != i){ //避免不必要的交换
-                    //array[i] = array[i] + array[min];
-                    //array[min] = array[i] - array[min];
-                    //array[i] = array[i] - array[min];
                     std::swap(array[i], array[min]);
                 }
 
