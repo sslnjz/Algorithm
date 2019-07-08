@@ -6,6 +6,7 @@
 #define ALGORITHM_ALGORITHM_H
 
 #include <vector>
+#include <functional>
 
 namespace algorithm
 {
@@ -180,7 +181,8 @@ namespace algorithm
         static void quick_sort(T* array, size_t&& size)
         {
             //lambda 递归调用
-            auto quick_sort_recursive = [](auto&& _self,T* _array, int _start, int _end)
+            std::function<void (T*, int, int)> quick_sort_recursive;
+            quick_sort_recursive = [&quick_sort_recursive](T* _array, int _start, int _end) ->void
             {
                 if(_start >= _end) return;
 
@@ -201,11 +203,11 @@ namespace algorithm
                 else
                     ++left;
 
-                _self(_self, _array, _start, left - 1);
-                _self(_self, _array, left + 1, _end);
+                quick_sort_recursive(_array, _start, left - 1);
+                quick_sort_recursive(_array, left + 1, _end);
             };
 
-            quick_sort_recursive( quick_sort_recursive, array, 0, size - 1 );
+            quick_sort_recursive( array, 0, size - 1 );
         }
     }
 }
