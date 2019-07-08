@@ -37,6 +37,7 @@ namespace algorithm
      * | Heap           |  n log n |   n log n   |  n log n  |     1      |    no      |
      * —————————————————————————————————————————————————————————————————————————————————
      */
+
     namespace sort {
 
         /*
@@ -52,21 +53,18 @@ namespace algorithm
          *                 候也不会交换，所以相同元素的前后顺序并没有改变，所以冒泡排序是一种稳定排序算法
         */
         template <class T>
-        static void BubbleSort(T array[], size_t&& size)
+        static void bubble_sort(T* array, size_t&& size)
         {
             int last = size; //记录最大泡泡的位置
             while(last > 1)
             {
                 int end = 0;
-                for (int j = 0; j < last - 1; ++j)
+                for (int i = 0; i < last - 1; ++i)
                 {
-                    if(array[j] > array[j + 1])
+                    if(array[i] > array[i + 1])
                     {
-                        array[j] = array[j] + array[j + 1];
-                        array[j + 1] = array[j] - array[j + 1];
-                        array[j] = array[j] - array[j + 1];
-
-                        end = j + 1;
+                        std::swap(array[i], array[i + 1]);
+                        end = i + 1;
                     }
                 }
                 last = end;
@@ -92,7 +90,7 @@ namespace algorithm
          *                 以选择排序是一个不稳定的排序算法。
          */
         template <class T>
-        static void SelectionSort(T array[], size_t&& size)
+        static void selection_sort(T* array, size_t&& size)
         {
             for (int i = 0; i < size - 1; ++i)
             {
@@ -103,9 +101,7 @@ namespace algorithm
                     }
                 }
                 if( min != i){ //避免不必要的交换
-                    array[i] = array[i] + array[min];
-                    array[min] = array[i] - array[min];
-                    array[i] = array[i] - array[min];
+                    std::swap(array[i], array[min]);
                 }
 
             }
@@ -117,7 +113,7 @@ namespace algorithm
          * @ Rational    : 将无序数列的第一个元素与有序数列的元素从后往前逐个进行比较，找出插入位置，将该元素插入到有序数列的合适位置中。
          * @ Complexity  : 时间复杂度 O(N²)， 空间复杂度O(1)
          * @ Description : 每次处理就是将无序数列的第一个元素与有序数列的元素从后往前逐个进行比较，找出插入位置，将该元素插入到有序数列
-         *                 的合适位置中。假设在一个无序的数组中，要将该数组中的数按插入排序的方法从小到大排序。假设啊a[]={3,5,2,1,4};
+         *                 的合适位置中。假设在一个无序的数组中，要将该数组中的数按插入排序的方法从小到大排序。假设a[]={3,5,2,1,4};
          *                 插入排序的思想就是比大小，满足条件交换位置，一开始会像冒泡排序一样，但会比冒泡多一步就是交换后（a[i]=a[i+1]）
          *                 原位置（a[i]）会继续和前面的数比较满足条件交换，直到a[i+1]前面的数组是有序的。比如在第二次比较后数组变成
          *                 a[]={2,3,5,1,4};
@@ -127,9 +123,9 @@ namespace algorithm
          *                 等元素的后面。所以，相等元素的前后顺序没有改变，从原无序序列出去的顺序就是排好序后的顺序，所以插入排序是稳定的。
          */
         template <class T>
-        static void InsertSort(T array[], size_t&& size)
+        static void insert_sort(T* array, size_t&& size)
         {
-            T temp;
+            T temp = NULL;
             int j = 0;
             for (int i = 1; i < size; ++i) {
                 temp = array[i];
@@ -138,6 +134,78 @@ namespace algorithm
                 }
                 array[j] = temp;
             }
+        }
+
+        /*
+         * @ Title       : 希尔排序
+         * @ Rational    : 希尔排序基于插入排序的以下两点性质进行改进：
+         *                   1.插入排序在对几乎已经排好序的数据操作时，效率高，即可以达到线性排序的效率
+         *                   2.插入排序一般来说是低效的，因为插入排序每次只能将数据移动一位
+         * @ Complexity  : 时间复杂度依赖于步长的选择, 一般位于：O(nlog²n) ~ O(n^3/2) ~ O(n²)
+         * @ Description : 希尔排序，也称递减增量排序算法，是插入排序的一种更高效的改进版本
+         * @ Stability   : 由于多次插入排序，我们知道一次插入排序是稳定的，不会改变相同元 素的相对顺序，但在不同的插入排序过程中，相同
+         *                 的元素可能在各自的插入排序中移动，最后其稳定性就会被打乱
+         */
+        template <class T>
+        static void shell_sort(T *array, size_t&& size)
+        {
+            size_t _step = 1;
+            while(_step < size / 3)
+                _step = _step * 3 + 1; //步长的选取最优解无定论，一般选择在 1/2 到 1/3 附近
+
+            while(_step >= 1)
+            {
+                for (int i = _step; i < size; ++i) {
+                    for (int j = i; j >= _step && array[j] < array[j - _step] ; j -= _step) {
+                        std::swap(array[j], array[j - _step]);
+                    }
+                }
+                _step = _step / 3;
+            }
+        }
+
+        /*
+         * @ Title       : 快速排序
+         * @ Rational    : 快速排序使用分治法策略来把一个序列分为较小和较大的2个子序列，然后递归地排序两个子序列
+         * @ Complexity  : 快速排序的时间复杂度是 O(nlogn)，极端情况下会退化成 O(n2), 空间复杂度 O(log n)
+         * @ Description : 快排算法步骤为：
+         *                   1. 挑选基准值：从数列中挑出一个元素，称为“基准”。
+         *                   2. 重新排序数列，所有比基准值小的元素摆放在基准前面，所有比基准值大的元素摆在基准后面（与基准值相等的数可
+         *                      以到任何一边）。在这个分割结束之后，对基准值的排序就已经完成
+         *                   3. 递归排序子序列：递归地将小于基准值元素的子序列和大于基准值元素的子序列排序。递归到最底部的判断条件是数
+         *                      列的大小是零或一，此时该数列显然已经有序。
+         * @ Stability   : 在对基准元素交换时，会打乱数组的稳定性，所以快速排序为不稳定的排序算法
+         */
+        template <class T>
+        static void quick_sort(T* array, size_t&& size)
+        {
+            //lambda 递归调用
+            auto quick_sort_recursive = [](auto&& _self,T* _array, int _start, int _end)
+            {
+                if(_start >= _end) return;
+
+                T mid = _array[_end]; //选取基准元素
+                int left = _start, right = _end - 1;
+                while(left < right)
+                {
+                    while(_array[left] < mid && left < right) //试图在左侧找到一个比基准元更大的元素
+                        ++left;
+                    while(_array[right] >= mid && left < right) //试图在右侧找到一个比基准元更小的元素
+                        --right;
+                    std::swap(_array[left], _array[right]); //交换元素
+                }
+
+                //当前left以前的元素都小于基准元素，left以后的都大于基准元素，如果left位置的值大于基准，则将基准交换至left位置。
+                if (_array[left] >= _array[_end])
+                    std::swap(_array[left], _array[_end]);
+                else
+                    ++left;
+
+                _self(_self, _array, _start, left - 1);
+                _self(_self, _array, left + 1, _end);
+            };
+
+            quick_sort_recursive( quick_sort_recursive, array, 0, size - 1 );
         }
     }
 }
