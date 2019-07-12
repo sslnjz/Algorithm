@@ -165,12 +165,12 @@ namespace algorithm::sort {
     {
         size_t size = ARRAY_SIZE(array);
         //lambda 递归调用
-        std::function<void (T*, int, int)> quick_sort_recursive;
-        quick_sort_recursive = [&quick_sort_recursive](T* _array, int _start, int _end) ->void
+        std::function<void (T&, int&&, int&&)> quick_sort_recursive;
+        quick_sort_recursive = [&quick_sort_recursive](T& _array, int&& _start, int&& _end) ->void
         {
             if(_start >= _end) return;
 
-            T mid = _array[_end]; //选取基准元素
+            auto mid = _array[_end]; //选取基准元素
             int left = _start, right = _end - 1;
             while(left < right)
             {
@@ -186,9 +186,9 @@ namespace algorithm::sort {
                 std::swap(_array[left], _array[_end]);
             else
                 ++left;
-
-            quick_sort_recursive(_array, _start, left - 1);
-            quick_sort_recursive(_array, left + 1, _end);
+            //这里_start和_end在被使用之后不会再使用，所以使用std::move使其转换成右值，避免不必要的拷贝，增加内存消耗
+            quick_sort_recursive(_array, std::move(_start), left - 1);
+            quick_sort_recursive(_array, left + 1, std::move(_end));
         };
 
         quick_sort_recursive( array, 0, size - 1 );
@@ -214,8 +214,8 @@ namespace algorithm::sort {
     {
         size_t size = ARRAY_SIZE(array);
 
-        std::function<void (T&, int, int)> heapify;
-        heapify = [](T& array, int _start, int _end) ->void {
+        std::function<void (T&, int&&, int&&)> heapify;
+        heapify = [](T& array, int&& _start, int&& _end) ->void {
             int _dad = _start;
             int _son =_dad * 2 + 1;
             while(_son <= _end)
