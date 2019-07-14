@@ -244,6 +244,50 @@ namespace algorithm::sort {
             heapify(array, 0, i - 1);
         }
     }
+
+    /*
+     * @ Title       : 归并排序
+     * @ Rational    : 采用分治法：
+     *                   分割：递归地把当前序列平均分割成两半。
+     *                   集成：在保持元素顺序的同时将上一步得到的子序列集成到一起（归并）
+     * @ Complexity  : 时间复杂度O(n log n)
+     * @ Description : 1. 将序列每相邻两个数字进行归并操作，形成 ceil(n/2)个序列，排序后每个序列包含两/一个元素
+     *                 2. 若此时序列数不是1个则将上述序列再次归并，形成 ceil(n/4)个序列，每个序列包含四/三个元素
+     *                 3. 重复步骤2，直到所有元素排序完毕，即序列数为1
+     * @ Stability   : 合并过程中我们可以保证如果两个当前元素相等时，我们把处在前面的序列的元素保存在结 果序列的前面，这样就保证了稳定性；
+     */
+
+    template <class T>
+    static void merge_sort(T* array, size_t size){
+        const size_t len = size;
+
+        std::function<void (T*, T*, int, int)> merge_sort_recursive;
+        merge_sort_recursive = [&merge_sort_recursive](T* array, T* reg, int start, int end){
+            if(start >= end) return;
+
+            int len = end - start;
+            int mid = (len >> 1) + start;
+            int start1 = start, end1 = mid;
+            int start2 = mid + 1, end2 = end;
+            merge_sort_recursive(array, reg, start1, end1);
+            merge_sort_recursive(array, reg, start2, end2);
+
+            int t = start;
+            while(start1 <= end1 && start2 <= end2)
+                reg[t++] = array[start1] < array[start2] ? array[start1++] : array[start2++];
+            while (start1 <= end1)
+                reg[t++] = array[start1++];
+            while(start2 <= end2)
+                reg[t++] = array[start2++];
+
+            for (t = start; t <= end; ++t) {
+                array[t] = reg[t];
+            }
+        };
+
+        T reg[size];
+        merge_sort_recursive(array, reg, 0, size - 1);
+    }
 }
 
 #endif //ALGORITHM_ALGORITHM_H
