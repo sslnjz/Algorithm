@@ -166,7 +166,7 @@ namespace algorithm::sort {
         size_t size = ARRAY_SIZE(array);
         //lambda 递归调用
         std::function<void (T&, int&&, int&&)> quick_sort_recursive;
-        quick_sort_recursive = [&quick_sort_recursive](T& _array, int&& _start, int&& _end) ->void
+        quick_sort_recursive = [&](T& _array, int&& _start, int&& _end) ->void
         {
             if(_start >= _end) return;
 
@@ -258,11 +258,12 @@ namespace algorithm::sort {
      */
 
     template <class T>
-    static void merge_sort(T* array, size_t size){
-        const size_t len = size;
+    static void merge_sort(T& array){
 
-        std::function<void (T*, T*, int, int)> merge_sort_recursive;
-        merge_sort_recursive = [&merge_sort_recursive](T* array, T* reg, int start, int end){
+        const size_t size = ARRAY_SIZE(array);
+
+        std::function<void (T&, T&, int, int)> merge_sort_recursive;
+        merge_sort_recursive = [&](T& array, T& reg, int start, int end){
             if(start >= end) return;
 
             int len = end - start;
@@ -286,7 +287,7 @@ namespace algorithm::sort {
         };
 
         T reg[size];
-        merge_sort_recursive(array, reg, 0, size - 1);
+        merge_sort_recursive(array, (T&) reg, 0, size - 1);
     }
 }
 
