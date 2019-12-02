@@ -1,19 +1,25 @@
 #include <iostream>
 #include "algorithm.h"
+#include "utility.h"
 
 
 int main() {
 
-    int array[] = {2, 7, 4, 4, 1, 3, 8, 7, 10, 3};
+   //int array[] = {2, 7, 4, 4, 1, 3, 8, 7, 10, 3};
 
-    algorithm::sort::BubbleSort(array, 10);
+   //algorithm::sort::merge_sort(array);
+   //algorithm::sort::print_array(array);
+   //std::cout << std::endl;
+   std::cout << algorithm::utility::uint2string(33) << std::endl;
 
-    for (int i = 0; i < 10; ++i) {
-        std::cout << array[i] << " ";
-    }
+   algorithm::utility::uint32 value = 33;
+   std::cout << algorithm::utility::uint2string(33) << std::endl;
 
-    std::cout << std::endl;
+   algorithm::utility::setbits2c(5, 3, 4, value);
+   std::cout << algorithm::utility::uint2string(value) << std::endl;
 
 
-    return 0;
+   system("PAUSE");
+
+   return 0;
 }
