@@ -108,7 +108,7 @@ namespace algorithm::sort {
     static void insert_sort(T& array)
     {
         size_t size = ARRAY_SIZE(array);
-        T temp = NULL;
+        auto temp = array[0];
         int j = 0;
         for (int i = 1; i < size; ++i) {
             temp = array[i];
@@ -256,8 +256,7 @@ namespace algorithm::sort {
      *                 3. 重复步骤2，直到所有元素排序完毕，即序列数为1
      * @ Stability   : 合并过程中我们可以保证如果两个当前元素相等时，我们把处在前面的序列的元素保存在结 果序列的前面，这样就保证了稳定性；
      */
-
-    template <class T>
+    template <typename T>
     static void merge_sort(T& array){
 
         const size_t size = ARRAY_SIZE(array);
@@ -286,8 +285,8 @@ namespace algorithm::sort {
             }
         };
 
-        T reg[size];
-        merge_sort_recursive(array, (T&) reg, 0, size - 1);
+        T reg = {0}; //Note, 当传递参数为数组引用时， T的类型为数组
+        merge_sort_recursive(array, reg, 0, size - 1);
     }
 }
 
