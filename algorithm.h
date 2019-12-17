@@ -8,7 +8,8 @@
 #include <vector>
 #include <functional>
 
-#define ARRAY_SIZE(array) ( sizeof(array) / sizeof(array[0]) )
+///Be noticed that this Macro only suits for the reference of an array not an array pointer.
+#define ARRAY_SIZE(array)  ( sizeof(array) / sizeof(array[0]) ) 
 
 namespace algorithm::sort {
 
@@ -260,7 +261,6 @@ namespace algorithm::sort {
     static void merge_sort(T& array){
 
         const size_t size = ARRAY_SIZE(array);
-
         std::function<void (T&, T&, int, int)> merge_sort_recursive;
         merge_sort_recursive = [&](T& array, T& reg, int start, int end){
             if(start >= end) return;
