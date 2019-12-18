@@ -7,8 +7,6 @@
 
 #include <string>
 
-
-
 namespace algorithm::utility
 {
    typedef int int32;
