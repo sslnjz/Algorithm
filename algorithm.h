@@ -259,7 +259,6 @@ namespace algorithm::sort {
      */
     template <typename T>
     static void merge_sort(T& array){
-
         const size_t size = ARRAY_SIZE(array);
         std::function<void (T&, T&, int, int)> merge_sort_recursive;
         merge_sort_recursive = [&](T& array, T& reg, int start, int end){
@@ -287,6 +286,57 @@ namespace algorithm::sort {
 
         T reg = {0}; //Note, 当传递参数为数组引用时， T的类型为数组
         merge_sort_recursive(array, reg, 0, size - 1);
+    }
+
+    /*
+    * @ Title       : 计数排序
+    * @ Rational    : 计数排序是一种稳定的线性时间排序算法。计数排序的核心在于将输入的数据值转化为键存储在额外开辟的数组空间中。
+    * @ Complexity  : 平均时间复杂度 O(n+k), 空间复杂度 O(n+k)
+    * @ Description : 通俗地理解，例如有10个年龄不同的人，统计出有8个人的年龄比A小，那A的年龄就排在第9位，
+    *                 用这个方法可以得到其他每个人的位置，也就排好了序。当然，年龄有重复时需要特殊处理
+    *                 （保证稳定性），这就是为什么最后要反向填充目标数组，以及将每个数字的统计减去1。
+    *                 算法的步骤如下：
+    *                   1. 找出待排序的数组中最大和最小的元素
+    *                   2. 统计数组中每个值为i的元素出现的次数，存入数组 C 的第i项
+    *                   3. 对所有的计数累加（从 C 中的第一个元素开始，每一项和前一项相加）
+    *                   4. 反向填充目标数组：将每个元素i放在新数组的第 C[i] 项，每放一个元素就将 C[i] 减去1
+    * @ Stability   : 
+    */
+
+    template<class T, size_t size>
+    static void counting_sort(T (&array)[size]) {
+
+       static_assert(std::is_integral<T>::value, "Only accepts integral arrays");
+       int max = static_cast<int>(array[0]);
+       const int& const_max = max;
+       for (size_t i = 1; i < size; ++i)
+       {
+          if (array[i] > max)
+             max = array[i];
+       }
+
+       T* output = new T[size + 1];
+       memset(output, 0, (size + 1) * sizeof(T));
+
+       T* count = new T[max + 1];
+       memset(count, 0, (max + 1) * sizeof(T));
+
+       for (size_t i = 0; i < size; ++i)
+       {
+          count[array[i]]++;
+       }
+
+       for (size_t i = 1; i < max + 1; ++i)
+       {
+          count[i] += count[i - 1];
+       }
+
+       for (size_t i = size; i > 0; --i)
+       {
+          output[--count[array[i-1]]] = array[i-1];
+       }
+
+       memmove(array, output, size * sizeof(T));
     }
 }
 
